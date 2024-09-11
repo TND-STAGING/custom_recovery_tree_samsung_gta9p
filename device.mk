@@ -55,7 +55,7 @@ PRODUCT_SOONG_NAMESPACES += \
 PRODUCT_TARGET_VNDK_VERSION := 32
 
 # Enable Fuse Passthrough
-#PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
+PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
 
 # Copy modules for depmod
 PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*.ko,$(LOCAL_PATH)/prebuilt/modules,$(TARGET_COPY_OUT_RECOVERY)/root/vendor/lib/modules)    
