@@ -1,0 +1,8 @@
+sx933x_937x_sar.ko
+eud.ko
+dispcc-holi.ko
+hx9023s.ko
+i2c-hid.ko
+xhci-hcd.ko
+usbtouchscreen.ko
+xhci-plat-hcd.ko
