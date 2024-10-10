@@ -33,6 +33,10 @@ on early-init
 on init
     setprop prepdecrypt.setpatch true
     start service vendor.modprobe  
+    start vendor.gatekeeper-1-0
+    start vendor.keymaster-4-0
+    start vaultkeeper
+    start vaultkeeper_hal
 
 on boot
     start health-hal-2-1
@@ -46,6 +50,10 @@ on fs
     # ANDROID_ROOT
     export ANDROID_ROOT /system_root
 
+on late-fs
+    # vaultkeeper
+    mkdir /dev/socket/vaultkeeper 0770 root root
+
 on post-fs
     mkdir /mnt/vendor/efs/DAK 0775 root root
     restorecon -R /mnt/vendor/efs/DAK
@@ -54,6 +62,7 @@ on post-fs
 
 on post-fs-data
     mkdir /data/vendor/keymaster 0775 root root
+    mkdir /data/vendor/gatekeeper 0770 root root
 
 service vendor.modprobe /vendor/bin/vendor_modprobe.sh
     class main
@@ -63,3 +72,40 @@ service vendor.modprobe /vendor/bin/vendor_modprobe.sh
     stdio_to_kmsg
     oneshot
     seclabel u:r:recovery:s0
+
+service vendor.gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
+    interface android.hardware.gatekeeper@1.0::IGatekeeper default
+    class hal
+    user root
+    group root 5678
+    seclabel u:r:recovery:s0
+
+service vendor.keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-service
+    interface android.hardware.keymaster@4.0::IKeymasterDevice default
+    class early_hal
+    user root
+    group root drmrpc
+    seclabel u:r:recovery:s0
+
+# VaultKeeper
+service vaultkeeper /vendor/bin/vaultkeeperd
+    class core
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service vaultkeeper_hal /vendor/bin/vendor.samsung.hardware.security.vaultkeeper@2.0-service
+    class early_hal
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service keystore2 /system/bin/keystore2 /data/misc/keystore
+    class early_hal
+    user keystore
+    group keystore readproc log 5666 5678
+    task_profiles ProcessCapacityHigh
+    seclabel u:r:recovery:s0
+
