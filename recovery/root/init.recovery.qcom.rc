@@ -32,7 +32,8 @@ on early-init
 
 on init
     setprop prepdecrypt.setpatch true
-    start service vendor.modprobe  
+    start service vendor.modprobe
+    start keystore2
     start vendor.gatekeeper-1-0
     start vendor.keymaster-4-0
     start vaultkeeper
